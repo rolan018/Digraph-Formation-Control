@@ -1,1 +1,1 @@
-from sat.sat import Sat
+from .sat import Sat
