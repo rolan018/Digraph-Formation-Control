@@ -36,14 +36,14 @@ def osk_to_iso(X, V):
     e1 = np.cross(e2.T, e3.T).T
 
     # Construct transformation matrix B
-    B = np.column_stack((e1, e2, e3))
+    A = np.column_stack((e1, e2, e3))
 
     # Perform vector transformations
     omega_vector = np.array([
         [0, omega, 0],
     ])
     er = np.cross(omega_vector, X)
-    v1 = np.dot(B, V.T + er.T) + vuw_p
-    x1 = np.dot(B, X.T) + xyz_p
+    v1 = np.dot(A, V.T + er.T) + vuw_p
+    x1 = np.dot(A, X.T) + xyz_p
 
     return x1, v1
