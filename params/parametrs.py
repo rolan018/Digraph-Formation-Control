@@ -3,7 +3,6 @@ Parametrs for satellites
 """
 from config import init_condition
 from utils import init_vector
-from integ import pk_4
 import math
 import numpy as np
 
@@ -46,12 +45,33 @@ class ReferenceOrbit:
         Parameters:
         - integrator: pk_4
         """
-        vector = integrator(np.append(self.position, self.velocity, axis=1), 
+        vector_step = integrator(self.get_last_vector(), 
                             right_func, 
                             control, 
                             self.params)
-        self.position = np.column_stack((self.position, vector[0,:3].reshape(3,1)))
-        self.velocity = np.column_stack((self.velocity, vector[0,3:].reshape(3,1)))
+        self.set_position(vector_step[0,:3].reshape(3,1))
+        self.set_velocity(vector_step[0,3:].reshape(3,1))
     
+    def get_position(self, index):
+        return self.position[:, index].reshape((3, 1))
+
+    def get_last_position(self):
+        return self.get_position(-1)
+
+    def set_position(self, item):
+        self.position = np.column_stack((self.position, item))
+
+    def get_velocity(self, index):
+        return self.velocity[:, index].reshape((3, 1))
+
+    def get_last_velocity(self):
+        return self.get_velocity(-1)
+
+    def set_velocity(self, item):
+        self.velocity = np.column_stack((self.velocity, item))
+
+    def get_last_vector(self):
+        return np.append(self.get_last_position(), self.get_last_velocity(), axis=0)
+
     def __repr__(self):
         return f"[INFO]: ReferenceOrbit({self.params})"
