@@ -9,5 +9,10 @@ pipenv shell
 ```
 
 ```
-pipenv sync
+pipenv update
+```
+
+Install new package
+```
+pipenv install <package name>
 ```
