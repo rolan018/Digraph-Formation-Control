@@ -5,17 +5,20 @@ def osk_to_iso(X, V):
     Transforms position and velocity vectors using orbital parameters.
 
     Parameters:
-    - X: numpy array, position vector.
-    - V: numpy array, velocity vector.
+    - X (1, 3): numpy array, position vector.
+    - V (1, 3): numpy array, velocity vector.
     - gravit_params: object with attribute 'omega'.
     - ref_params: object with attribute 'pos_vel', a 2D numpy array.
     - tau: scalar parameter.
     - i: integer index.
 
     Returns:
-    - x1: numpy array, transformed position vector.
-    - v1: numpy array, transformed velocity vector.
+    - x1 (3, 1): numpy array, transformed position vector.
+    - v1 (3, 1): numpy array, transformed velocity vector.
     """
+    #Check shape
+    if X.shape != (1, 3) or V.shape != (1, 3):
+            raise ValueError("\"X\" or \"V\" size must be: (1, 3)")
 
     # Extract position and velocity from reference parameters
     # xyz_p = ref_params.pos_vel[0:3, i]

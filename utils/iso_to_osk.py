@@ -65,18 +65,20 @@ def iso_to_osk_v2(x, v):
     Transforms position and velocity vectors from one coordinate system to another.
 
     Parameters:
-    - x: numpy array of shape (3,), position vector in the original coordinate system.
-    - v: numpy array of shape (3,), velocity vector in the original coordinate system.
+    - x: numpy array of shape (1,3), position vector in the original coordinate system.
+    - v: numpy array of shape (1,3), velocity vector in the original coordinate system.
     - gravit_params: object with attribute 'omega' (scalar).
     - ref_params: object with attribute 'pos_vel', a 2D numpy array of shape (6, N).
     - tau: scalar parameter.
     - i: integer index (0-based for Python).
 
     Returns:
-    - X1: numpy array of shape (3,), transformed position vector.
-    - V1: numpy array of shape (3,), transformed velocity vector.
+    - X1: numpy array of shape (3,1), transformed position vector.
+    - V1: numpy array of shape (3,1), transformed velocity vector.
     """
-
+    #Check shape
+    if x.shape != (1, 3) or v.shape != (1, 3):
+            raise ValueError("\"x\" or \"v\" size must be: (1, 3)")
     # Extract position and velocity from reference parameters
     # xyz_p = ref_params.pos_vel[0:3, i]
     # vuw_p = ref_params.pos_vel[3:6, i]
