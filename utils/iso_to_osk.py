@@ -1,4 +1,5 @@
 import numpy as np
+from .checkers import check_many_size
 
 def cosd(degrees):
     """Compute the cosine of angles in degrees."""
@@ -60,7 +61,7 @@ def iso_to_osk_v1(x, v, xyz_p, vuw_p, gravit_params, ref_params, tau):
     
     return X, V
 
-def iso_to_osk_v2(x, v):
+def iso_to_osk_v2(x, v, ref_orbit, params):
     """
     Transforms position and velocity vectors from one coordinate system to another.
 
@@ -77,19 +78,12 @@ def iso_to_osk_v2(x, v):
     - V1: numpy array of shape (3,1), transformed velocity vector.
     """
     #Check shape
-    if x.shape != (1, 3) or v.shape != (1, 3):
-            raise ValueError("\"x\" or \"v\" size must be: (1, 3)")
+    check_many_size(x, v, (1,3))
+
     # Extract position and velocity from reference parameters
-    # xyz_p = ref_params.pos_vel[0:3, i]
-    # vuw_p = ref_params.pos_vel[3:6, i]
-    # omega = gravit_params.omega
-    xyz_p = np.array([
-        [1, 1, 0],
-    ]).reshape(3,1)
-    vuw_p = np.array([
-        [1, 1, 1],
-    ]).reshape(3,1)
-    omega = 2
+    xyz_p = ref_orbit.get_last_position()
+    vuw_p = ref_orbit.get_last_velocity()
+    omega = params.omega
 
 
     # Compute unit vectors

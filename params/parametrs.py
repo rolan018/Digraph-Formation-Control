@@ -2,9 +2,10 @@
 Parametrs for satellites
 """
 from config import init_condition
-from utils import init_vector
+from .init_position import init_vector
 import math
 import numpy as np
+from utils import check_size
 
 class Params:
     def __init__(self):
@@ -59,6 +60,8 @@ class ReferenceOrbit:
         return self.get_position(-1)
 
     def set_position(self, item):
+        # check shape
+        check_size(item, (3,1))
         self.position = np.column_stack((self.position, item))
 
     def get_velocity(self, index):
@@ -68,6 +71,8 @@ class ReferenceOrbit:
         return self.get_velocity(-1)
 
     def set_velocity(self, item):
+        # check shape
+        check_size(item, (3,1))
         self.velocity = np.column_stack((self.velocity, item))
 
     def get_last_vector(self):

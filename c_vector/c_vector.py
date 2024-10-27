@@ -1,6 +1,6 @@
 import numpy as np
 from params import Params
-
+from utils import check_many_size
 
 def get_c1(x, v, params: Params):
     """
@@ -25,8 +25,8 @@ def get_c1(x, v, params: Params):
         Calculated C1
     """
     # check shape
-    if x.shape != (3, 1) or v.shape != (3, 1):
-        raise ValueError("\"x\" or \"v\" size must be: (3, 1)")
+    check_many_size(x, v, (3,1))
+
     # Extract position components
     z = x[2,0]
 

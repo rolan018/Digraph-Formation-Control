@@ -1,6 +1,7 @@
 import numpy as np
+from .checkers import check_many_size
 
-def osk_to_iso(X, V):
+def osk_to_iso(X, V, ref_orbit, params):
     """
     Transforms position and velocity vectors using orbital parameters.
 
@@ -17,20 +18,12 @@ def osk_to_iso(X, V):
     - v1 (3, 1): numpy array, transformed velocity vector.
     """
     #Check shape
-    if X.shape != (1, 3) or V.shape != (1, 3):
-            raise ValueError("\"X\" or \"V\" size must be: (1, 3)")
+    check_many_size(X, V, (1, 3))
 
     # Extract position and velocity from reference parameters
-    # xyz_p = ref_params.pos_vel[0:3, i]
-    # vuw_p = ref_params.pos_vel[3:6, i]
-    # omega = gravit_params.omega
-    xyz_p = np.array([
-        [1, 1, 0],
-    ]).reshape(3,1)
-    vuw_p = np.array([
-        [1, 1, 1],
-    ]).reshape(3,1)
-    omega = 2
+    xyz_p = ref_orbit.get_last_position()
+    vuw_p = ref_orbit.get_last_velocity()
+    omega = params.omega
 
     # Compute unit vectors
     e3 = xyz_p / np.linalg.norm(xyz_p)
