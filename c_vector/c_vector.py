@@ -24,6 +24,9 @@ def get_c1(x, v, params: Params):
     - C_1: float
         Calculated C1
     """
+    # check shape
+    if x.shape != (3, 1) or v.shape != (3, 1):
+        raise ValueError("\"x\" or \"v\" size must be: (3, 1)")
     # Extract position components
     z = x[2,0]
 
