@@ -2,12 +2,11 @@
 Integration function
 """
 import numpy as np
-
+from utils import check_size
 
 def pk_4(vec, get_f, control, params, h: int = 1):
     # check shape
-    if vec.shape != (6, 1):
-        raise ValueError("vec size must be: (6, 1)")
+    check_size(vec, (6, 1))
     x0 = vec[:3, 0].reshape((1, 3))
     v0 = vec[3:, 0].reshape((1, 3))
     k1 = np.append(v0,
