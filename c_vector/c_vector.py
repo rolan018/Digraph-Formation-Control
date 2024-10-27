@@ -2,7 +2,7 @@ import numpy as np
 from params import Params
 
 
-def get_c1_vector(x, v, params: Params):
+def get_c1(x, v, params: Params):
     """
     Calculate the C1
 
