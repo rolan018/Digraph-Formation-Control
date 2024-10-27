@@ -2,7 +2,6 @@ import numpy as np
 from utils import osk_to_iso
 from utils import iso_to_osk_v2
 from c_vector import get_c1
-from numpy import linalg as la
 from utils import check_size, check_many_size
 from params import Params, ReferenceOrbit
 
