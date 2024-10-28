@@ -5,10 +5,19 @@ import numpy as np
 from utils import check_size
 
 def pk_4(vec, get_f, control, params, h: int = 1):
-    # check shape
-    check_size(vec, (6, 1))
+
     x0 = vec[:3, 0].reshape((1, 3))
     v0 = vec[3:, 0].reshape((1, 3))
+
+    # check shape
+    check_size(vec, (6, 1))
+
+    # validate func vector
+    check_size(get_f(x0, params), (1, 3))
+
+    # validate control vector
+    check_size(control, (1, 3))
+
     k1 = np.append(v0,
                    get_f(x0, params) + control, axis=1)
     k2 = np.append(v0 + k1[0, 3:] * h / 2,
