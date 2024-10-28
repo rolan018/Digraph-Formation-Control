@@ -28,5 +28,5 @@ def pk_4(vec, get_f, control, params, h: int = 1):
 
     k4 = np.append(v0 + k3[0, 3:] * h,
                    get_f(x0 + k3[0, :3] * h, params) + control, axis=1)
-    vec = vec.reshape((1, 6))
-    return vec + h/6 * (k1 + 2 * k2 + 2 * k3 + k4)
+
+    return vec.reshape((1, 6)) + h/6 * (k1 + 2 * k2 + 2 * k3 + k4)
