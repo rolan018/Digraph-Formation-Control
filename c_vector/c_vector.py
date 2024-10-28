@@ -2,7 +2,7 @@ import numpy as np
 from params import Params
 from utils import check_many_size
 
-def get_c1(x, v, params: Params):
+def get_c1(x, v, params: Params) -> float:
     """
     Calculate the C1
 
@@ -37,7 +37,7 @@ def get_c1(x, v, params: Params):
     omega = params.omega
 
     # Calculate c1
-    return v_x / omega + 2 * z
+    return float(v_x / omega + 2 * z)
 
 def get_c_vector(x, v, t_0, params: Params):
     """
