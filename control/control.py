@@ -1,7 +1,11 @@
+import logging
 import numpy as np
+
 from params import Params, ReferenceOrbit
 
-def get_control(c_diff:float, params: Params, ref_orbit: ReferenceOrbit):
+logger = logging.getLogger(__name__)
+
+def get_control(c_diff:float, ref_orbit: ReferenceOrbit, params: Params):
     """
     Calculate the control vector u1 based on position, velocity, and control parameters.
     
@@ -24,7 +28,6 @@ def get_control(c_diff:float, params: Params, ref_orbit: ReferenceOrbit):
     # Construct transformation matrix B
     A = np.column_stack((e1, e2, e3))
 
-    if c_diff != 0.0:
-        control_iso = A @ np.array([[params.k*c_diff, 0, 0]]).reshape(3,1) 
-        return control_iso.reshape(1,3) 
-    return np.zeros((1, 3))
+    control_iso = (A @ np.array([[params.k*c_diff, 0, 0]]).reshape(3,1)).reshape(1,3)
+    logger.info(f"C_diff:{c_diff}, control:{control_iso}")
+    return control_iso
