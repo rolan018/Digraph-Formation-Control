@@ -41,15 +41,17 @@ class ReferenceOrbit:
     def _init_vector(self, t0, params: Params):
         return init_vector(t0, params)
     
-    def integ_step(self, integrator, right_func, control):
+    def integ_step(self, integrator, right_func, control, dt):
         """
         Parameters:
         - integrator: pk_4
+        - dt: delta time
         """
         vector_step = integrator(self.get_last_vector(), 
                             right_func, 
                             control, 
-                            self.params)
+                            self.params,
+                            dt)
         self.set_position(vector_step[0,:3].reshape(3,1))
         self.set_velocity(vector_step[0,3:].reshape(3,1))
     
