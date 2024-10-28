@@ -4,9 +4,11 @@ from utils import iso_to_osk_v2
 from c_vector import get_c1
 from utils import check_size, check_many_size
 from params import Params, ReferenceOrbit
+import logging
+
+logger = logging.getLogger(__name__)
 
 class Sat:
-
     def __init__(self, xyz, uvw, sat_type: int, ref_orbit:ReferenceOrbit, params: Params):
         # Check correct shape
         check_many_size(xyz, uvw, (3, 1))
@@ -16,19 +18,22 @@ class Sat:
         self.sat_type = sat_type
         self.ref_orbit = ref_orbit
         self.params = params
-        self.c1 = get_c1(xyz, uvw, params)
         self.position_iso, self.velocity_iso = self.convert_osk_to_iso(xyz, uvw)
+        # Params for control sat
+        self.c1 = list()
     
-    def integ_step(self, integrator, right_func, control):
+    def integ_step(self, integrator, right_func, control, dt):
         """
         Parameters:
         - integrator: pk_4
+        - dt: delta time
         """
-        vector_iso = self.get_last_vector(-1, type='iso')
+        vector_iso = self.get_vector(-1, type='iso')
         vector_step = integrator(vector_iso, 
                             right_func, 
                             control, 
-                            self.params)
+                            self.params,
+                            dt)
         position_iso = vector_step[0,:3].reshape(3,1)
         velocity_iso = vector_step[0,3:].reshape(3,1)
         # Save position and velocity
@@ -39,6 +44,7 @@ class Sat:
         # Save position and velocity
         self.set_position(position_osk, type='osk')
         self.set_velocity(velocity_osk, type='osk')
+        logger.info("Integrate step")
 
     def get_position(self, index: int, type: str):
         match type:
@@ -85,10 +91,21 @@ class Sat:
             case _:
                 raise ValueError("Type must be: \"osk\" or \"iso\"")
 
-    def calculate_c1(self, position, velocity):
-        c1 = get_c1(position, velocity, self.params)
-        self.c1 = np.column_stack((self.c1, c1))
+    def calculate_c1(self):
+        c1 = get_c1(self.get_position(-1, "osk"), 
+                    self.get_velocity(-1, "osk"), 
+                    self.params)
+        if len(self.c1) == 0:
+            logger.info(f"Init c1 for sat:{c1}")
+        self.c1.append(c1)
         return c1
+    
+    def set_control(self, control):
+        if hasattr(self, 'control'):
+            logger.info(f"Init control for sat:{control}")
+            self.control = control
+        else:
+            self.control = np.column_stack((self.control, control))
 
     def convert_iso_to_osk(self, x, v):
         check_many_size(x, v, (3, 1))
