@@ -1,7 +1,7 @@
 import numpy as np
 from params import Params, ReferenceOrbit
 
-def get_control(c_diff:float, params: Params, ref_orbit: ReferenceOrbit, i: int):
+def get_control(c_diff:float, params: Params, ref_orbit: ReferenceOrbit):
     """
     Calculate the control vector u1 based on position, velocity, and control parameters.
     
@@ -14,8 +14,8 @@ def get_control(c_diff:float, params: Params, ref_orbit: ReferenceOrbit, i: int)
     Returns:
     - control_iso: np.ndarray, control vector (3 elements)
     """
-    xyz_p = ref_orbit.position[:, i]
-    vuw_p = ref_orbit.velocity[:, i]
+    xyz_p = ref_orbit.get_last_position()
+    vuw_p = ref_orbit.get_last_velocity()
     # Compute unit vectors
     e3 = xyz_p / np.linalg.norm(xyz_p)
     cross_prod = np.cross(xyz_p.T, vuw_p.T)
@@ -26,5 +26,5 @@ def get_control(c_diff:float, params: Params, ref_orbit: ReferenceOrbit, i: int)
 
     if c_diff != 0.0:
         control_iso = A @ np.array([[params.k*c_diff, 0, 0]]).reshape(3,1) 
-        return control_iso.reshape(3,1) 
-    return np.zeros((3, 1))
+        return control_iso.reshape(1,3) 
+    return np.zeros((1, 3))
