@@ -100,6 +100,9 @@ class Sat:
         self.c1.append(c1)
         return c1
     
+    def get_last_c1(self):
+        return self.c1[-1]
+    
     def set_control(self, control):
         if hasattr(self, 'control'):
             logger.info(f"Init control for sat:{control}")
