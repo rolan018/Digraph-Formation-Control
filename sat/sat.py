@@ -1,15 +1,16 @@
 import numpy as np
 from utils import osk_to_iso
 from utils import iso_to_osk_v2
-from c_vector import get_c1
 from utils import check_size, check_many_size
 from params import Params, ReferenceOrbit
+from .sat_type import SatType
+from c_vector import get_c1
 import logging
 
 logger = logging.getLogger(__name__)
 
 class Sat:
-    def __init__(self, xyz, uvw, sat_type: int, ref_orbit:ReferenceOrbit, params: Params):
+    def __init__(self, xyz, uvw, sat_type: SatType, ref_orbit:ReferenceOrbit, params: Params, func_c1 = get_c1):
         # Check correct shape
         check_many_size(xyz, uvw, (3, 1))
         # Init property
@@ -21,6 +22,8 @@ class Sat:
         self.position_iso, self.velocity_iso = self.convert_osk_to_iso(xyz, uvw)
         # Params for control sat
         self.c1 = list()
+        # function calculate c1
+        self.func_c1 = func_c1
     
     def integ_step(self, integrator, right_func, control, dt):
         """
@@ -92,16 +95,16 @@ class Sat:
                 raise ValueError("Type must be: \"osk\" or \"iso\"")
 
     def calculate_c1(self):
-        c1 = get_c1(self.get_position(-1, "osk"), 
-                    self.get_velocity(-1, "osk"), 
-                    self.params)
+        c1 = self.func_c1(self.get_position(-1, "osk"), 
+                          self.get_velocity(-1, "osk"), 
+                          self.params)
         if len(self.c1) == 0:
             logger.info(f"Init c1 for sat:{c1}")
         self.c1.append(c1)
         return c1
     
-    def get_last_c1(self):
-        return self.c1[-1]
+    def get_c1(self, index):
+        return self.c1[index]
     
     def set_control(self, control):
         if hasattr(self, 'control'):
@@ -119,4 +122,4 @@ class Sat:
         return osk_to_iso(x.T, v.T, self.ref_orbit, self.params)
 
     def __repr__(self):
-        return f"[INFO]: Sat TYPE={self.sat_type}\nINIT POSITION={self.get_position(-1, type='osk')}"
+        return f"[INFO]: Sat TYPE={self.sat_type}\nINIT POSITION=\n{self.get_position(-1, type='osk')}"
