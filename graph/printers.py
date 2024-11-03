@@ -1,25 +1,18 @@
 import networkx as nx
+from networkx import Graph
 import matplotlib.pyplot as plt
 
-def print_graph(nodes: list, edges: list):
-    G = nx.Graph()
-
-    G.add_nodes_from(nodes)
-    G.add_edges_from(edges)
+def print_graph(G: Graph):
     nx.draw(G, with_labels=True, font_weight='bold')
     plt.show()
 
-def print_graph_with_weights(nodes: list, edges: list):
-    G = nx.Graph()
-
-    G.add_nodes_from(nodes)
-    G.add_weighted_edges_from(edges)
-
+def print_graph_with_weights(G: Graph):
     pos = nx.spring_layout(G, seed=7)  # positions for all nodes - seed for reproducibility
 
     # nodes
     nx.draw_networkx_nodes(G, pos, node_size=700)
 
+    edges = G.edges()
     # edges
     nx.draw_networkx_edges(G, pos, edgelist=edges, width=6)
 
