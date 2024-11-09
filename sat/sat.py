@@ -9,8 +9,17 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+
 class Sat:
-    def __init__(self, xyz, uvw, sat_type: SatType, ref_orbit:ReferenceOrbit, params: Params, func_c1 = get_c1):
+    def __init__(
+        self,
+        xyz,
+        uvw,
+        sat_type: SatType,
+        ref_orbit: ReferenceOrbit,
+        params: Params,
+        func_c1=get_c1,
+    ):
         # Check correct shape
         check_many_size(xyz, uvw, (3, 1))
         # Init property
@@ -24,29 +33,25 @@ class Sat:
         self.c1 = list()
         # function calculate c1
         self.func_c1 = func_c1
-    
+
     def integ_step(self, integrator, right_func, control, dt):
         """
         Parameters:
         - integrator: pk_4
         - dt: delta time
         """
-        vector_iso = self.get_vector(-1, type='iso')
-        vector_step = integrator(vector_iso, 
-                            right_func, 
-                            control, 
-                            self.params,
-                            dt)
-        position_iso = vector_step[0,:3].reshape(3,1)
-        velocity_iso = vector_step[0,3:].reshape(3,1)
+        vector_iso = self.get_vector(-1, type="iso")
+        vector_step = integrator(vector_iso, right_func, control, self.params, dt)
+        position_iso = vector_step[0, :3].reshape(3, 1)
+        velocity_iso = vector_step[0, 3:].reshape(3, 1)
         # Save position and velocity
-        self.set_position(position_iso, type='iso')
-        self.set_velocity(velocity_iso, type='iso')
+        self.set_position(position_iso, type="iso")
+        self.set_velocity(velocity_iso, type="iso")
         # Convert iso to osk
         position_osk, velocity_osk = self.convert_iso_to_osk(position_iso, velocity_iso)
         # Save position and velocity
-        self.set_position(position_osk, type='osk')
-        self.set_velocity(velocity_osk, type='osk')
+        self.set_position(position_osk, type="osk")
+        self.set_velocity(velocity_osk, type="osk")
         logger.info("Integrate step")
 
     def get_position(self, index: int, type: str):
@@ -56,7 +61,7 @@ class Sat:
             case "iso":
                 return self.position_iso[:, index].reshape((3, 1))
             case _:
-                raise ValueError("Type must be: \"osk\" or \"iso\"")
+                raise ValueError('Type must be: "osk" or "iso"')
 
     def set_position(self, item, type: str):
         check_size(item, (3, 1))
@@ -66,8 +71,8 @@ class Sat:
             case "iso":
                 self.position_iso = np.column_stack((self.position_iso, item))
             case _:
-                raise ValueError("Type must be: \"osk\" or \"iso\"")
-            
+                raise ValueError('Type must be: "osk" or "iso"')
+
     def get_velocity(self, index: int, type: str):
         match type:
             case "osk":
@@ -75,7 +80,7 @@ class Sat:
             case "iso":
                 return self.velocity_iso[:, index].reshape((3, 1))
             case _:
-                raise ValueError("Type must be: \"osk\" or \"iso\"")
+                raise ValueError('Type must be: "osk" or "iso"')
 
     def set_velocity(self, item, type: str):
         check_size(item, (3, 1))
@@ -85,29 +90,33 @@ class Sat:
             case "iso":
                 self.velocity_iso = np.column_stack((self.velocity_iso, item))
             case _:
-                raise ValueError("Type must be: \"osk\" or \"iso\"")
-            
+                raise ValueError('Type must be: "osk" or "iso"')
+
     def get_vector(self, index: int, type: str):
         match type:
             case "osk" | "iso":
-                return np.append(self.get_position(index, type), self.get_velocity(index, type), axis=0)
+                return np.append(
+                    self.get_position(index, type),
+                    self.get_velocity(index, type),
+                    axis=0,
+                )
             case _:
-                raise ValueError("Type must be: \"osk\" or \"iso\"")
+                raise ValueError('Type must be: "osk" or "iso"')
 
     def calculate_c1(self):
-        c1 = self.func_c1(self.get_position(-1, "osk"), 
-                          self.get_velocity(-1, "osk"), 
-                          self.params)
+        c1 = self.func_c1(
+            self.get_position(-1, "osk"), self.get_velocity(-1, "osk"), self.params
+        )
         if len(self.c1) == 0:
             logger.info(f"Init c1 for sat:{c1}")
         self.c1.append(c1)
         return c1
-    
+
     def get_c1(self, index):
         return self.c1[index]
-    
+
     def set_control(self, control):
-        if hasattr(self, 'control'):
+        if hasattr(self, "control"):
             logger.info(f"Init control for sat:{control}")
             self.control = control
         else:

@@ -2,12 +2,16 @@ import networkx as nx
 from networkx import Graph
 import matplotlib.pyplot as plt
 
+
 def print_graph(G: Graph):
-    nx.draw(G, with_labels=True, font_weight='bold')
+    nx.draw(G, with_labels=True, font_weight="bold")
     plt.show()
 
+
 def print_graph_with_weights(G: Graph):
-    pos = nx.spring_layout(G, seed=7)  # positions for all nodes - seed for reproducibility
+    pos = nx.spring_layout(
+        G, seed=7
+    )  # positions for all nodes - seed for reproducibility
 
     # nodes
     nx.draw_networkx_nodes(G, pos, node_size=700)

@@ -7,6 +7,7 @@ from graph.utils import adder_edge_with_weight
 def create_nodes(sat_matrix: list[Sat]):
     return [i for i in range(len(sat_matrix))]
 
+
 def create_edges_with_weights(sat_matrix: list[Sat]):
     edges = []
     sat_distances = dict()
@@ -18,8 +19,11 @@ def create_edges_with_weights(sat_matrix: list[Sat]):
         adder_edge_with_weight(edges, main_sat, second_sat, dist)
     return edges
 
+
 # Вспомогательные функции
-def calculate_helper_objects(sat_matrix: list[Sat], edges: list, sat_distances: dict, i: int, j: int):
+def calculate_helper_objects(
+    sat_matrix: list[Sat], edges: list, sat_distances: dict, i: int, j: int
+):
     sat_i = sat_matrix[i]
     sat_j = sat_matrix[j]
     if i != j:
@@ -34,6 +38,7 @@ def calculate_helper_objects(sat_matrix: list[Sat], edges: list, sat_distances: 
                     sat_distances[j].append((i, dist))
                 else:
                     sat_distances[j] = [(i, dist)]
+
 
 def get_min_distance(distances: list):
     for i in range(len(distances)):
