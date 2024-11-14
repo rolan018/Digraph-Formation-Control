@@ -1,7 +1,8 @@
 import networkx as nx
+import numpy as np
 from sat import Sat
 from .discrete_utils import create_nodes, create_edges_with_weights
-
+from graph.printers import print_graph_with_weights, print_graph
 
 class DiscreteGraph():
     def __init__(self, sat_matrix: list[Sat], with_waights=False):
@@ -28,6 +29,16 @@ class DiscreteGraph():
             G.add_edges_from(self.__edges)
         return G
 
+    def calculate_c_diff(self, target: int):
+        c1_for_control = []
+        if target not in self.__nodes:
+            raise ValueError("target must be in nodes")
+        for neighbor in self.__G.neighbors(target):
+            c1_for_control.append(self.sat_matrix[neighbor].get_c1(-1))
+            # print(target, neighbor, self.__G.get_edge_data(neighbor, target)['weight'])
+        c1_mean = np.mean(c1_for_control)
+        return c1_mean-self.sat_matrix[target].get_c1(-1)
+
     def get_nodes(self):
         return self.__nodes
     
@@ -36,6 +47,12 @@ class DiscreteGraph():
     
     def get_graph(self):
         return self.__G
+    
+    def print_graph_with_weights(self):
+        print_graph_with_weights(self.__G)
+    
+    def print_graph(self):
+        print_graph(self.__G)
 
     @staticmethod
     def create_nodes(sat_matrix: list[Sat]):
