@@ -4,20 +4,20 @@ from sat import Sat
 from .discrete_utils import create_nodes, create_edges_with_weights
 from graph.printers import print_graph_with_weights, print_graph
 
-class DiscreteGraph():
+class DiscreteGraph:
     def __init__(self, sat_matrix: list[Sat], with_waights=False):
         self.sat_matrix = sat_matrix
         self.with_waights = with_waights
         self.__nodes = self.__init_nodes()
         self.__edges = self.__init_edges()
         self.__G = self.__init_graph()
-    
+
     def __init_nodes(self):
         return DiscreteGraph.create_nodes(self.sat_matrix)
 
     def __init_edges(self):
         if self.with_waights:
-            return DiscreteGraph.create_edges_with_weights(self.sat_matrix) 
+            return DiscreteGraph.create_edges_with_weights(self.sat_matrix)
         return DiscreteGraph.create_edges(self.sat_matrix)
 
     def __init_graph(self):
@@ -41,10 +41,10 @@ class DiscreteGraph():
 
     def get_nodes(self):
         return self.__nodes
-    
+
     def get_edges(self):
         return self.__edges
-    
+
     def get_graph(self):
         return self.__G
     
@@ -56,24 +56,24 @@ class DiscreteGraph():
 
     @staticmethod
     def create_nodes(sat_matrix: list[Sat]):
-        '''
+        """
         nodes = [<node1>, <node2>, ...]
-        '''
+        """
         return create_nodes(sat_matrix=sat_matrix)
-    
+
     @staticmethod
     def create_edges(sat_matrix: list[Sat]):
-        '''
+        """
         edges = [(<node1>, <node2>, <weight>), (...), ...]
-        '''
+        """
         edges = DiscreteGraph.create_edges_with_weights(sat_matrix)
         return [(edge[0], edge[1]) for edge in edges]
 
     @staticmethod
     def create_edges_with_weights(sat_matrix: list[Sat]):
-        '''
+        """
         edges = [(<node1>, <node2>, <weight>), (...), ...]
-        '''
+        """
         return create_edges_with_weights(sat_matrix=sat_matrix)
 
     def __repr__(self):
