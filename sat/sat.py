@@ -2,6 +2,7 @@ import numpy as np
 from utils import osk_to_iso
 from utils import iso_to_osk_v2
 from utils import check_size, check_many_size
+from utils.energy import calculate_energy
 from params import Params, ReferenceOrbit
 from .sat_type import SatType
 from c_vector import get_c1
@@ -24,6 +25,8 @@ class Sat:
         self.c1 = list()
         # function calculate c1
         self.func_c1 = func_c1
+        # energy for sat
+        self.energy = [calculate_energy(self.position_iso, self.velocity_iso, params)]
     
     def integ_step(self, integrator, right_func, control, dt):
         """
@@ -48,6 +51,8 @@ class Sat:
         self.set_position(position_osk, type='osk')
         self.set_velocity(velocity_osk, type='osk')
         logger.info("Integrate step")
+        self.energy.append(calculate_energy(position_iso, velocity_iso, self.params))
+        logger.info("Calculate energy")
 
     def get_position(self, index: int, type: str):
         match type:
@@ -105,6 +110,9 @@ class Sat:
     
     def get_c1(self, index):
         return self.c1[index]
+    
+    def get_energy(self, index):
+        return self.energy[index]
     
     def set_control(self, control):
         if hasattr(self, 'control'):
