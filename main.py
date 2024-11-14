@@ -9,7 +9,10 @@ from control import get_control
 
 
 logger = logging.getLogger(__name__)
-logging.basicConfig(filename='satapp.log', level=logging.INFO)
+logging.basicConfig(format='%(asctime)s %(levelname)-8s %(message)s',
+                    filename='satapp.log', 
+                    level=logging.INFO,
+                    datefmt='%Y-%m-%d %H:%M:%S')
 
 # Init. All parameters
 params = Params()
