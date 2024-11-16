@@ -82,4 +82,4 @@ class ReferenceOrbit:
         return np.append(self.get_last_position(), self.get_last_velocity(), axis=0)
 
     def __repr__(self):
-        return f"[INFO]: ReferenceOrbit({self.params})"
+        return f"[INFO]: ReferenceOrbit\nVec:{self.get_last_vector}"

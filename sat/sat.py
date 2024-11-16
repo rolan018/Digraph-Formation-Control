@@ -115,7 +115,6 @@ class Sat:
         if len(self.c1) == 0:
             logger.info(f"Init c1 for sat:{c1}")
         self.c1.append(c1)
-        return c1
 
     def get_c1(self, index):
         return self.c1[index]
