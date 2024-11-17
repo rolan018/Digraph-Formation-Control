@@ -1,7 +1,7 @@
 import numpy as np
 
 MIN=0.2
-MAX=4.0
+MAX=1.5
 SIZE=(3,1) 
 
 def init_velocity(num_sats):
