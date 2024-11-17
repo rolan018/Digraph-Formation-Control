@@ -138,4 +138,4 @@ class Sat:
         return osk_to_iso(x.T, v.T, self.ref_orbit, self.params)
 
     def __repr__(self):
-        return f"[INFO]: Sat TYPE={self.sat_type}\nINIT POSITION=\n{self.get_position(-1, type='osk')}"
+        return f"Sat TYPE={self.sat_type}\nINIT POSITION=\n{self.get_position(-1, type='osk')}\nINIT VELOCITY=\n{self.get_velocity(-1, type='osk')}"
