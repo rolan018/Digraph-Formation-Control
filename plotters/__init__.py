@@ -1,1 +1,1 @@
-from .plot import plot_c1, plot_position
+from .plot import plot_c1, plot_position, plot_1d
