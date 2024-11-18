@@ -8,7 +8,7 @@ import numpy as np
 from utils import check_size
 
 def validate_control(control_iso):
-    max_control = 0.010
+    max_control = 0.005
     # check valid shape
     check_size(control_iso, (1, 3))
     control = control_iso

@@ -36,6 +36,8 @@ class Sat:
         self.func_c1 = func_c1
         # energy for sat
         self.energy = [calculate_energy(self.position_iso, self.velocity_iso, params)]
+        # norm control 
+        self.norm_control = []
     
     def integ_step(self, integrator, right_func, control, dt):
         """
@@ -128,6 +130,7 @@ class Sat:
             self.control = control
         else:
             self.control = np.column_stack((self.control, control))
+        self.norm_control.append(np.linalg.norm(control))
 
     def convert_iso_to_osk(self, x, v):
         check_many_size(x, v, (3, 1))

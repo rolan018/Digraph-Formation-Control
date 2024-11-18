@@ -23,10 +23,13 @@ def plot_c1(sats: list[Sat], t, description):
     ax.legend()
     plt.show()
 
-def plot_1d(t, metric, description):
+def plot_1d(t, metrics, description):
     ax = plt.figure().add_subplot()
     ax.set_xlabel('T')
     ax.set_ylabel(description)
-    ax.plot(t, metric)
+    for i, metric in enumerate(metrics):   
+        line, = ax.plot(t, metric)
+        line.set_label(f'{description}_{i}')
+    ax.legend()
     plt.title(f'{description}(T)')
     plt.show()
