@@ -125,7 +125,7 @@ class Sat:
         return self.energy[index]
     
     def set_control(self, control):
-        if hasattr(self, "control"):
+        if not hasattr(self, "control"):
             logger.info(f"Init control for sat:{control}")
             self.control = control
         else:

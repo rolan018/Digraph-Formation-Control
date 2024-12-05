@@ -7,8 +7,12 @@ control -> f(control) -> validate_control
 import numpy as np
 from utils import check_size
 
-def validate_control(control_iso):
-    max_control = 0.005
+zero_control = np.array([[0, 0, 0]])
+max_control = 0.005
+
+def validate_control(control_iso, deactivated: bool):
+    if deactivated:
+        return zero_control
     # check valid shape
     check_size(control_iso, (1, 3))
     control = control_iso

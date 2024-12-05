@@ -12,12 +12,12 @@ def init_position_for_line(num_sats):
     # direction vector
     line = _random_norm_vector(MIN, MAX, SIZE)
     t=0
-    for i in range(num_sats):
+    for _ in range(num_sats):
         t += random.uniform(MIN, MAX)
         yield init_point + line*t
 
 def init_position(num_sats):
-    for i in range(num_sats):
+    for _ in range(num_sats):
         yield np.random.uniform(low=MIN, high=MAX, size=SIZE)
 
 def _random_norm_vector(min, max, size):
