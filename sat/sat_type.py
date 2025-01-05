@@ -21,3 +21,4 @@ class SatTypeRaft(Enum):
     CANDIDATE = auto()
     LEADER = auto()
     FOLLOWER = auto()
+    CRASHED = auto()

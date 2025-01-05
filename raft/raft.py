@@ -1,52 +1,37 @@
-import numpy as np
 from sat import Sat, SatTypeRaft
+from topology import FormationTopology
 
 """
 Получаем 
 """
 class ConsensusFormationControl():
     def __init__(self, sats: list[Sat]):
-        self.sats = sats
-        self.leader_index = None
-        self.number_of_nodes = len(sats)
+        self.topology = FormationTopology(sats)
+        # Init process
+        self.topology._startup_event()
+
+    def process(self):
+        self.topology.tick()
+        for i, sat in enumerate(self.topology.sats):
+            if sat.ticker == sat.ticker_timeout and sat.sat_type != SatTypeRaft.CRASHED:
+                sat.sat_type = SatTypeRaft.CANDIDATE
+                self.topology.leader_election(i)
+                break
+            if sat.sat_type == SatTypeRaft.CRASHED:
+                self.crash_sat(i)
+        self.topology.leader_heartbeat()
+
+    def crash_sat(self, sat_index):
+        self.topology.sats[sat_index].sat_type = SatTypeRaft.CRASHED
+        self.topology.crashed_sats.append(self.topology.sats[sat_index])
+        self.topology.sats.pop(sat_index)
+
+    def add_sat_from_crashed(self, sat_index):
+        self.topology.startup_event_for_sat(self.topology.crashed_sats[sat_index])
+        self.topology.crashed_sats.pop(sat_index)
+
+    def new_sat(self, sat: Sat):
+        self.topology.startup_event_for_sat(sat)
     
-    def receipt_event(self, event):
-        self.event = event
-        # Special event starts leader election
-        self.leader_election()
-        # 
-
-    def receipt_new_node(self):
-
-
-    def leader_election(self):
-        if self.leader_index is None:
-            # Sync step
-            for i, sat in enumerate(self.sats):
-                sat.relative_distance = ConsensusFormationControl.relative_distance(i, self.sats)
-            # 
-            
-
-    def startup_event(self):
-        for sat in self.sats:
-            sat.sat_type = SatTypeRaft.FOLLOWER
-    
-    @staticmethod    
-    def relative_distance(index: int, sats: list[Sat]):
-        result_distance = 0
-        for i in range(len(sats)):
-            if index != i:
-                osk_i = sats[i].get_position(-1, "osk")
-                osk_j = sats[index].get_position(-1, "osk")
-                distance = np.round(np.linalg.norm(osk_i-osk_j), 2)
-                result_distance += distance
-        return result_distance
-    
-    def election(self, election_state):
-        for sat in self.sats:
-
-
-
-    
-    def step(self):
-       pass 
+    def get_leader_index(self):
+        return self.topology.get_leader_index()
