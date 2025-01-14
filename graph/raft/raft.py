@@ -1,10 +1,10 @@
 from sat import Sat
 import networkx as nx
 import numpy as np
-from .leader_utils import create_nodes, create_edges_with_weights
+from .raft_utils import create_nodes, create_edges_with_weights
 from graph.printers import print_graph_with_weights, print_graph
 
-class LeaderGraph:
+class RaftGraph:
     def __init__(self, sat_matrix: list[Sat], with_waights=False):
         self.sat_matrix = sat_matrix
         self.with_waights = with_waights
@@ -13,12 +13,12 @@ class LeaderGraph:
         self.__G = self.__init_graph()
 
     def __init_nodes(self):
-        return LeaderGraph.create_nodes(self.sat_matrix)
+        return RaftGraph.create_nodes(self.sat_matrix)
 
     def __init_edges(self):
         if self.with_waights:
-            return LeaderGraph.create_edges_with_weights(self.sat_matrix)
-        return LeaderGraph.create_edges(self.sat_matrix)
+            return RaftGraph.create_edges_with_weights(self.sat_matrix)
+        return RaftGraph.create_edges(self.sat_matrix)
 
     def __init_graph(self):
         G = nx.Graph()
@@ -36,7 +36,7 @@ class LeaderGraph:
         for neighbor in self.__G.neighbors(target):
             c1_for_control.append(self.sat_matrix[neighbor].get_c1(-1))
             # print(target, neighbor, self.__G.get_edge_data(neighbor, target)['weight'])
-        c1_mean = np.mean(c1_for_control)
+        c1_mean = np.mean(c1_for_control) if len(c1_for_control)>0 else self.sat_matrix[target].get_c1(-1)
         return c1_mean-self.sat_matrix[target].get_c1(-1)
 
     def get_nodes(self):
@@ -66,7 +66,7 @@ class LeaderGraph:
         """
         edges = [(<node1>, <node2>, <weight>), (...), ...]
         """
-        edges = LeaderGraph.create_edges_with_weights(sat_matrix)
+        edges = RaftGraph.create_edges_with_weights(sat_matrix)
         return [(edge[0], edge[1]) for edge in edges]
 
     @staticmethod

@@ -1,8 +1,9 @@
 from sat import Sat, SatTypeRaft
-from topology import FormationTopology
+from .topology import FormationTopology
+from graph.raft import RaftGraph
 
 """
-Получаем 
+Рафт протокол
 """
 class ConsensusFormationControl():
     def __init__(self, sats: list[Sat]):
@@ -21,10 +22,19 @@ class ConsensusFormationControl():
                 self.crash_sat(i)
         self.topology.leader_heartbeat()
 
+    def get_graph(self, with_waights: bool) -> RaftGraph:
+        return RaftGraph(sat_matrix=self.topology.sats, with_waights=with_waights)
+
     def crash_sat(self, sat_index):
         self.topology.sats[sat_index].sat_type = SatTypeRaft.CRASHED
         self.topology.crashed_sats.append(self.topology.sats[sat_index])
         self.topology.sats.pop(sat_index)
+    
+    def crash_leader(self):
+        self.crash_sat(self.get_leader_index())
+    
+    def add_sat_from_last_crashed(self):
+        self.add_sat_from_crashed(0)
 
     def add_sat_from_crashed(self, sat_index):
         self.topology.startup_event_for_sat(self.topology.crashed_sats[sat_index])

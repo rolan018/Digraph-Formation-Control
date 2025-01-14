@@ -3,7 +3,7 @@ import random
 from sat import Sat, SatTypeRaft
 
 """
-Получаем 
+Класс обслуживает топологию взаимодействия агентов 
 """
 class FormationTopology():
     def __init__(self, sats: list[Sat]):
@@ -27,8 +27,8 @@ class FormationTopology():
         self.sats.append(sat)
 
     def leader_heartbeat(self):
-        leader_index = self._validate_leader()
-        if leader_index != None:
+        self._leader_index = self._validate_leader()
+        if self._leader_index != None:
             for sat in self.sats:
                 self._update_ticker(sat)
     
@@ -42,12 +42,14 @@ class FormationTopology():
         relative_distance.sort(key = lambda item: item[1])
         if relative_distance[0][0] == sat_index:
             self.sats[sat_index].sat_type = SatTypeRaft.LEADER
+            self._leader_index = sat_index
         else:
             self.sats[sat_index].sat_type = SatTypeRaft.FOLLOWER
             self.sats[relative_distance[0][0]].sat_type = SatTypeRaft.LEADER
+            self._leader_index = relative_distance[0][0]
 
     
-    def _validate_leader(self):
+    def _validate_leader(self) -> int:
         # Лидер всегда 1, с максимальной эпохой
         leader_indexes = []
         for i, sat in enumerate(self.sats):
@@ -68,7 +70,7 @@ class FormationTopology():
     
     def _update_ticker(self, sat: Sat):
         sat.ticker = 0
-        sat.ticker_timeout = random.randint(3, 7)
+        sat.ticker_timeout = random.randint(3, 5)
 
     @staticmethod
     def relative_distance(index: int, sats: list[Sat]):

@@ -4,7 +4,6 @@ from utils import iso_to_osk_v2
 from utils import check_size, check_many_size
 from utils.energy import calculate_energy
 from params import Params, ReferenceOrbit
-from .sat_type import SatType
 from c_vector import get_c1
 import logging
 
@@ -16,7 +15,7 @@ class Sat:
         self,
         xyz,
         uvw,
-        sat_type: SatType,
+        sat_type,
         ref_orbit: ReferenceOrbit,
         params: Params,
         func_c1=get_c1,
