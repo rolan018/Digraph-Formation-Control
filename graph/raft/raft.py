@@ -29,10 +29,10 @@ class RaftGraph:
             G.add_edges_from(self.__edges)
         return G
 
-    def calculate_c_diff(self, target: int):
+    def calculate_c_diff(self, target: int) -> float:
         c1_for_control = []
         if target not in self.__nodes:
-            raise ValueError("target must be in nodes")
+            return 0.0
         for neighbor in self.__G.neighbors(target):
             c1_for_control.append(self.sat_matrix[neighbor].get_c1(-1))
             # print(target, neighbor, self.__G.get_edge_data(neighbor, target)['weight'])
