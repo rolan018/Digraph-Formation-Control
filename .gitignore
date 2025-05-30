@@ -2,3 +2,5 @@
 __pycache__
 satapp.log
 /data/experiments
+/data/problems
+/data/scenarious
