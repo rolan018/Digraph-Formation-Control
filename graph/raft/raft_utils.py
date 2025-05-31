@@ -12,7 +12,7 @@ def create_edges_with_weights(sat_matrix: list[Sat]):
     for i in range(len(sat_matrix)):
         if sat_matrix[i].sat_type == SatTypeRaft.LEADER:
             for j in range(len(sat_matrix)):
-                if i != j and sat_matrix[i].sat_type != SatTypeRaft.CRASHED:
+                if i != j and sat_matrix[j].sat_type != SatTypeRaft.CRASHED:
                     x_i = sat_matrix[i].get_position(-1, "osk")
                     x_j = sat_matrix[j].get_position(-1, "osk")
                     dist = np.round(np.linalg.norm(x_i - x_j), 2)

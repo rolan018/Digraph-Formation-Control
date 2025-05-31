@@ -9,10 +9,10 @@ init_condition["C_REF"] = 0
 """
 ref. params
 """
-init_condition["I0_P"] = 40
+init_condition["I0_P"] = 60
 init_condition["OMEGA0_P"] = 20
 init_condition["U0_P"] = 5
-init_condition["RHO"] = 6880
+init_condition["RHO"] = 7080
 
 """
 Grav. params

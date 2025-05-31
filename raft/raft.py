@@ -22,7 +22,7 @@ class ConsensusFormationControl():
         self.topology.leader_heartbeat()
 
     def get_graph(self, with_waights: bool) -> RaftGraph:
-        return RaftGraph(sat_matrix=self.topology.sats, with_waights=with_waights)
+        return RaftGraph(sat_matrix=[sat for sat in self.topology.sats], with_waights=with_waights)
 
     def crash_sat(self, sat_index):
         self.topology.sats[sat_index].sat_type = SatTypeRaft.CRASHED

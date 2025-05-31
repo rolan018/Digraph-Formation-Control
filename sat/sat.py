@@ -123,12 +123,7 @@ class Sat:
     def get_energy(self, index):
         return self.energy[index]
     
-    def set_control(self, control):
-        if not hasattr(self, "control"):
-            logger.info(f"Init control for sat:{control}")
-            self.control = control
-        else:
-            self.control = np.column_stack((self.control, control))
+    def set_norm_control(self, control):
         self.norm_control.append(np.linalg.norm(control))
 
     def convert_iso_to_osk(self, x, v):

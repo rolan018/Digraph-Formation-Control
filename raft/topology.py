@@ -5,6 +5,13 @@ from sat import Sat, SatTypeRaft
 """
 Класс обслуживает топологию взаимодействия агентов 
 """
+
+TICKER_TIMEOUT_MIN = 100
+TICKER_TIMEOUT_MAX = 150
+STARTUP_TICKER_TIMEOUT_MIN = 3
+STARTUP_TICKER_TIMEOUT_MAX = 5
+
+
 class FormationTopology():
     def __init__(self, sats: list[Sat]):
         self.sats = sats
@@ -37,9 +44,10 @@ class FormationTopology():
         self.sats[sat_index].sat_type = SatTypeRaft.CANDIDATE
         # Sync step
         relative_distance = []
+        index_list = [i for i in range(len(self.sats))]
         for i in range(len(self.sats)):
             if self.sats[i].sat_type != SatTypeRaft.CRASHED:
-                relative_distance.append((i, FormationTopology.relative_distance(i, self.crashed_indexes, self.sats)))
+                relative_distance.append((i, self._relative_distance(i, index_list)))
         # modelling election with min relative distance
         relative_distance.sort(key = lambda item: item[1])
         if relative_distance[0][0] == sat_index:
@@ -77,21 +85,42 @@ class FormationTopology():
     
     def _startup_event(self):
         for sat in self.sats:
-            self._update_ticker(sat)
+            self._startup_update_ticker(sat)
             sat.epoch = 0
             sat.sat_type = SatTypeRaft.FOLLOWER
     
     def _update_ticker(self, sat: Sat):
         sat.ticker = 0
-        sat.ticker_timeout = random.randint(3, 5)
+        sat.ticker_timeout = random.randint(TICKER_TIMEOUT_MIN, TICKER_TIMEOUT_MAX)
+    
+    def _startup_update_ticker(self, sat: Sat):
+        sat.ticker = 0
+        sat.ticker_timeout = random.randint(STARTUP_TICKER_TIMEOUT_MIN, STARTUP_TICKER_TIMEOUT_MAX)
 
-    @staticmethod
-    def relative_distance(index: int, crashed_indexes: list[int], sats: list[Sat]):
+    def _relative_distance(self, index: int, index_list: list[int]):
+        osk_i = self.sats[index].get_position(-1, "osk")
         result_distance = 0
-        for i in range(len(sats)):
-            if index != i and i not in crashed_indexes:
-                osk_i = sats[i].get_position(-1, "osk")
-                osk_j = sats[index].get_position(-1, "osk")
+        for j, sat in enumerate(self.sats):
+            if index != j and j not in self.crashed_indexes and j in index_list:
+                osk_j = sat.get_position(-1, "osk")
                 distance = np.round(np.linalg.norm(osk_i-osk_j), 2)
                 result_distance += distance
         return result_distance
+    
+    def _relative_vision(self, target_index) -> list[int]:
+        vision_list: list[int] = 0
+        osk_target = self.sats[target_index].get_position(-1, "osk")
+        for i, sat in enumerate(self.sats):
+            if i != target_index:
+                osk_i = sat.get_position(-1, "osk")
+                distance = np.round(np.linalg.norm(osk_target-osk_i), 2)
+                if distance <= self.sats[target_index].vision_param:
+                    vision_list.append(i)
+        return vision_list
+
+    def _phi_parametr(self, index: int):
+        # считаем кол-во видимых спутников
+        alpha = self._relative_vision(index)
+        # считаем расстояние до видимых спутников
+        betta = self._relative_distance(index, alpha)
+        return len(alpha) + 1/betta
